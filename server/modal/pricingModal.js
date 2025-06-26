@@ -28,6 +28,7 @@ const PricingConfigSchema = new mongoose.Schema(
     additionalPricePerKm: {
       type: Number,
       required: true,
+      default:10,
     },
 
     timeMultipliers: [

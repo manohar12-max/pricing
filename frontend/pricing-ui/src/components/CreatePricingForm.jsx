@@ -115,49 +115,60 @@ const CreatePricingForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+  e.preventDefault();
+  if (!validateForm()) return;
 
-    const cleanedData = {
-      ...formData,
-      additionalPricePerKm: Number(formData.additionalPricePerKm),
-      basePrices: formData.basePrices.map((b) => ({
-        ...b,
-        price: Number(b.price),
-        upto_km: Number(b.upto_km),
-      })),
-      timeMultipliers: formData.timeMultipliers.map((t) => ({
-        ...t,
-        minDuration: Number(t.minDuration),
-        maxDuration: Number(t.maxDuration),
-        multiplier: Number(t.multiplier),
-      })),
-      waitingCharge: {
-        initialFreeMinutes: Number(formData.waitingCharge.initialFreeMinutes),
-        intervalMinutes: Number(formData.waitingCharge.intervalMinutes),
-        chargePerMinutes: Number(formData.waitingCharge.chargePerMinutes),
-      },
-    };
+  const cleanedData = {
+    ...formData,
+    additionalPricePerKm: Number(formData.additionalPricePerKm),
+    basePrices: formData.basePrices.map(({ _id, ...rest }) => ({
+      ...rest,
+      price: Number(rest.price),
+      upto_km: Number(rest.upto_km),
+    })),
+    timeMultipliers: formData.timeMultipliers.map(({ _id, ...rest }) => ({
+      ...rest,
+      minDuration: Number(rest.minDuration),
+      maxDuration: Number(rest.maxDuration),
+      multiplier: Number(rest.multiplier),
+    })),
+    waitingCharge: {
+      initialFreeMinutes: Number(formData.waitingCharge.initialFreeMinutes),
+      intervalMinutes: Number(formData.waitingCharge.intervalMinutes),
+      chargePerMinutes: Number(formData.waitingCharge.chargePerMinutes),
+    },
+  };
 
-    try {
-      if (isEditMode) {
-        await API.put(`/update/${editId}`, cleanedData);
-        alert("Pricing config updated!");
-      } else {
-        await API.post("/create", cleanedData);
-        alert("Pricing config created!");
-      }
-      navigate("/configs");
-    } catch (error) {
-      console.error(error);
+  try {
+    if (isEditMode) {
+      await API.put(`/update/${editId}`, cleanedData);
+      alert("Pricing config updated!");
+    } else {
+      await API.post("/create", cleanedData);
+      alert("Pricing config created!");
+    }
+    navigate("/configs");
+  } catch (error) {
+    console.error(error);
+
+    const firstError = error.response?.data?.errors?.[0];
+    if (firstError) {
+      const fieldParts = firstError.field.split(".");
+      const fieldName = fieldParts[fieldParts.length - 1];
+      alert(`${fieldName}: ${firstError.message}`);
+    } else {
       alert("Failed to submit pricing config.");
     }
-  };
+  }
+};
+
 
   return (
     <div className="max-w-2xl mx-auto mt-6 p-4 border rounded shadow bg-white">
       <h2 className="text-xl font-semibold mb-4">
-        {isEditMode ? "Edit Pricing Configuration" : "Create Pricing Configuration"}
+        {isEditMode
+          ? "Edit Pricing Configuration"
+          : "Create Pricing Configuration"}
       </h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Configuration Name */}
@@ -211,7 +222,9 @@ const CreatePricingForm = () => {
                 className="w-full p-2 border"
                 placeholder="eg: 4"
                 value={bp.upto_km}
-                onChange={(e) => updateBasePrice(index, "upto_km", e.target.value)}
+                onChange={(e) =>
+                  updateBasePrice(index, "upto_km", e.target.value)
+                }
               />
 
               <label className="block mt-2">Price (₹)</label>
@@ -220,7 +233,9 @@ const CreatePricingForm = () => {
                 className="w-full p-2 border"
                 placeholder="eg: 80"
                 value={bp.price}
-                onChange={(e) => updateBasePrice(index, "price", e.target.value)}
+                onChange={(e) =>
+                  updateBasePrice(index, "price", e.target.value)
+                }
               />
             </div>
           ))}
@@ -352,7 +367,10 @@ const CreatePricingForm = () => {
         </div>
 
         {/* Submit */}
-        <button type="submit" className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+        <button
+          type="submit"
+          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
+        >
           {isEditMode ? "Update" : "Submit"}
         </button>
       </form>
