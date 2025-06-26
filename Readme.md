@@ -91,6 +91,17 @@ npm run dev
 
 ### 2. Frontend Setup
 
+In a `frontend/pricing-ui/src/api` file inside `api.js` make the following changes if to run frontend with local or deployed backend url
+  for deployed backend on render 
+  
+  baseURL: "https://pricing-rwt1.onrender.com/api/pricing" 
+
+  for local
+  baseURL: "http://localhost:5000/api/pricing"
+
+ 
+
+
 ```bash
 cd frontend/pricing-ui
 npm install
