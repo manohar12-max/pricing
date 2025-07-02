@@ -2,14 +2,21 @@ const Pricing = require("../modal/pricingModal");
 const calculatePriceLogic = require("../services/priceCalculator");
 
 const createPricing = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     const { isActive } = req.body;
+
     if (isActive) {
-      await Pricing.updateMany({}, { isActive: false });
+      await Pricing.updateMany({}, { isActive: false }, { session });
     }
 
     const newPricing = new Pricing(req.body);
-    await newPricing.save();
+    await newPricing.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
 
     res.status(201).json({
       success: true,
@@ -17,6 +24,8 @@ const createPricing = async (req, res) => {
       data: newPricing,
     });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
     res.status(500).json({
       success: false,
       message: "Failed to create pricing configuration",
@@ -77,24 +86,33 @@ const getPricingConfigById = async (req, res) => {
 };
 
 const updatePricingConfig = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     const { isActive } = req.body;
+
     if (isActive) {
-      await Pricing.updateMany({}, { isActive: false });
+      await Pricing.updateMany({}, { isActive: false }, { session });
     }
 
     const updatedConfig = await Pricing.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true }
+      { new: true, runValidators: true, session }
     );
 
     if (!updatedConfig) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(404).json({
         success: false,
         error: "Pricing config not found",
       });
     }
+
+    await session.commitTransaction();
+    session.endSession();
 
     res.status(200).json({
       success: true,
@@ -102,6 +120,8 @@ const updatePricingConfig = async (req, res) => {
       data: updatedConfig,
     });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
     res.status(500).json({ success: false, error: err.message });
   }
 };
