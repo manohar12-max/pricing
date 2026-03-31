@@ -15,6 +15,21 @@ function App() {
         <Route path="/edit/:id" element={<CreatePricingForm />} />
         <Route path="/configs" element={<PricingList />} />
         <Route path="/calculate" element={<PriceCalculator />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/create" element={<CreatePricingForm />} />
+        <Route path="/edit/:id" element={<CreatePricingForm />} />
+        <Route path="/configs" element={<PricingList />} />
+        <Route path="/calculate" element={<PriceCalculator />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/create" element={<CreatePricingForm />} />
+        <Route path="/edit/:id" element={<CreatePricingForm />} />
+        <Route path="/configs" element={<PricingList />} />
+        <Route path="/calculate" element={<PriceCalculator />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/create" element={<CreatePricingForm />} />
+        <Route path="/edit/:id" element={<CreatePricingForm />} />
+        <Route path="/configs" element={<PricingList />} />
+        <Route path="/calculate" element={<PriceCalculator />} />
       </Routes>
     </Router>
   );
