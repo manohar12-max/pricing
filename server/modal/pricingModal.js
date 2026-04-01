@@ -71,17 +71,6 @@ const PricingConfigSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-PricingConfigSchema.index({name:-1});
-PricingConfigSchema.index({name:-1});
-PricingConfigSchema.index({name:-1});
-PricingConfigSchema.index({name:-1});
-PricingConfigSchema.index({name:-1});
-PricingConfigSchema.index({name:-1});
-PricingConfigSchema.index({name:-1});
-PricingConfigSchema.index({name:-1});
-PricingConfigSchema.index({name:-1});
-PricingConfigSchema.index({name:-1});
-PricingConfigSchema.index({name:-1});
-PricingConfigSchema.index({name:-1});
+
 
 module.exports = mongoose.model("Pricing", PricingConfigSchema);
